@@ -55,6 +55,7 @@ type Request struct {
 		} `json:"package"`
 		Formats      []string `json:"formats"`
 		Accomodation string   `json:"accomodation"`
+		Ukraine      string   `json:"ukraine"`
 		Equipment    string   `json:"equipment"`
 	} `json:"varia"`
 }
