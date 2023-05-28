@@ -1,0 +1,28 @@
+parameters: {}
+environment: {}
+packages:
+    - name: website
+      shared: false
+      environment: {}
+      parameters: {}
+      annotations: {}
+      functions:
+        - name: mail
+          binary: false
+          main: ""
+          runtime: go:default
+          web: true
+          webSecure: false
+          environment:
+            WEBHOOK: "${WEBHOOK}"
+        - name: upload
+          binary: false
+          main: ""
+          runtime: go:default
+          web: true
+          webSecure: false
+          environment:
+            REGION: "${REGION}"
+            BUCKET: "${BUCKET}"
+            KEY: "${KEY}"
+            SECRET: "${SECRET}"
