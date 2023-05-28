@@ -1,11 +1,11 @@
-module github.com/startup-nights/functions/packages/website/mail
+module github.com/startup-nights/functions
 
 go 1.19
 
 require (
-	github.com/slack-go/slack v0.12.2
 	golang.org/x/oauth2 v0.8.0
 	google.golang.org/api v0.124.0
+	gopkg.in/ini.v1 v1.67.0
 )
 
 require (
@@ -17,7 +17,6 @@ require (
 	github.com/google/uuid v1.3.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.2.3 // indirect
 	github.com/googleapis/gax-go/v2 v2.8.0 // indirect
-	github.com/gorilla/websocket v1.4.2 // indirect
 	go.opencensus.io v0.24.0 // indirect
 	golang.org/x/crypto v0.1.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
