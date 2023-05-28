@@ -9,6 +9,8 @@ well.
 # initial setup of digitalocean
 doctl auth init
 doctl serverless connect
+# setup the cors configuration for spaces
+s3cmd setcors cors.xml s3://startupnights
 
 # create credentials for gmail / sheets API and update the env file
 go run cmd/token/main.go
@@ -18,6 +20,10 @@ doctl serverless deploy . --env data.env
 ```
 
 ## Notes
+
+Deploying / building the functions is not very consistent - there is often a 
+failure. Upon trying again, it often just vanishes. No solution yet; increasing
+both memory and timeout didn't solve it yet.
 
 To be able to upload files to spaces, there are specific CORS settings 
 necessary. The result in this repo is a mix of:
