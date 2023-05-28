@@ -23,7 +23,7 @@ packages:
             ${SHEETS}
         limits:
           memory: 1024
-          timeout: 12000
+          timeout: 5000
       - name: upload
         binary: false
         main: ""
@@ -37,4 +37,4 @@ packages:
           SECRET: "${SECRET}"
         limits:
           memory: 1024
-          timeout: 12000
+          timeout: 5000

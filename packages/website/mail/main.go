@@ -1,20 +1,15 @@
 package main
 
 import (
-	"bytes"
 	"context"
-	"encoding/base64"
 	"encoding/json"
 	"fmt"
 	"net/http"
 	"os"
 	"text/template"
 
+	"github.com/pkg/errors"
 	"github.com/slack-go/slack"
-	"golang.org/x/oauth2"
-	"golang.org/x/oauth2/google"
-	"google.golang.org/api/gmail/v1"
-	"google.golang.org/api/option"
 )
 
 var (
@@ -103,24 +98,9 @@ type ResponseData struct {
 func Main(in Request) (*Response, error) {
 	ctx := context.Background()
 
-	// indent data for better readability in slack
-	data, err := json.MarshalIndent(in, "", "  ")
-	if err != nil {
-		return &Response{
-			StatusCode: http.StatusInternalServerError,
-			Headers:    map[string]string{"Content-Type": "application/json"},
-			Body: ResponseData{
-				Error: fmt.Sprintf("indent request body json: %v", err),
-			},
-		}, nil
-	}
-
 	// backup - send the data in slack in case the google tokens are not valid
-	// anymore
-	if err := slack.PostWebhook(webhook, &slack.WebhookMessage{
-		Channel: "10_01_booth_notification",
-		Text:    string(data),
-	}); err != nil {
+	// anymore or something else happens
+	if err := sendSlackMessage(in); err != nil {
 		return &Response{
 			StatusCode: http.StatusInternalServerError,
 			Headers:    map[string]string{"Content-Type": "application/json"},
@@ -130,65 +110,19 @@ func Main(in Request) (*Response, error) {
 		}, nil
 	}
 
-	config, err := google.ConfigFromJSON([]byte(credentials), gmail.GmailComposeScope)
-	if err != nil {
+	// try to save the data to a google sheet
+	if err := saveToSheets(ctx, in); err != nil {
 		return &Response{
 			StatusCode: http.StatusInternalServerError,
 			Headers:    map[string]string{"Content-Type": "application/json"},
 			Body: ResponseData{
-				Error: fmt.Sprintf("get config from json credentials: %v", err),
+				Error: fmt.Sprintf("save data to sheets: %v", err),
 			},
 		}, nil
 	}
 
-	token := &oauth2.Token{}
-	if err := json.NewDecoder(bytes.NewBuffer([]byte(gmailCreds))).Decode(token); err != nil {
-		return &Response{
-			StatusCode: http.StatusInternalServerError,
-			Headers:    map[string]string{"Content-Type": "application/json"},
-			Body: ResponseData{
-				Error: fmt.Sprintf("decode credentials to oauth token: %v", err),
-			},
-		}, nil
-	}
-
-	client := config.Client(ctx, token)
-	service, err := gmail.NewService(ctx, option.WithHTTPClient(client))
-	if err != nil {
-		return &Response{
-			StatusCode: http.StatusInternalServerError,
-			Headers:    map[string]string{"Content-Type": "application/json"},
-			Body: ResponseData{
-				Error: fmt.Sprintf("create service from gmail client: %v", err),
-			},
-		}, nil
-	}
-
-	var message gmail.Message
-
-	buf := bytes.NewBuffer([]byte{})
-	if err := tpl.Execute(buf, in); err != nil {
-		return &Response{
-			StatusCode: http.StatusInternalServerError,
-			Headers:    map[string]string{"Content-Type": "application/json"},
-			Body: ResponseData{
-				Error: fmt.Sprintf("setup email template: %v", err),
-			},
-		}, nil
-	}
-
-	// TODO: might have to check where linebreaks should be an where not
-	msg := fmt.Sprintf(
-		"To: %s\r\nSubject: %s\n%s\n\n\n%s",
-		in.Contact.Email,
-		"Startup Nights 2023 Booth Application",
-		mime,
-		buf.String(),
-	)
-
-	message.Raw = base64.URLEncoding.EncodeToString([]byte(msg))
-
-	if _, err := service.Users.Messages.Send("me", &message).Do(); err != nil {
+	// send the mail to the applicant
+	if err := sendMail(ctx, in); err != nil {
 		return &Response{
 			StatusCode: http.StatusInternalServerError,
 			Headers:    map[string]string{"Content-Type": "application/json"},
@@ -205,23 +139,23 @@ func Main(in Request) (*Response, error) {
 	}, nil
 }
 
-const BoothRegistrationTemplate = `Hi {{.Contact.FirstName}} {{.Contact.LastName}},
+func sendSlackMessage(in Request) error {
+	// indent data for better readability in slack
+	data, err := json.MarshalIndent(in, "", "  ")
+	if err != nil {
+		return errors.Wrap(err, "indent json")
+	}
 
-thank you for the registration for a booth for {{.Company.Name}} at the Startup Nights 2023 this November. We will reach out to you soon to confirm your registration.
- 
-{{if .Varia.Formats}}
-Beside the booth, you were interested in:
-{{range .Varia.Formats}} - {{.}}
-{{end}}
-We are going to reach out to you regarding the registration for these formats separately.
-{{end}}
+	if err := slack.PostWebhook(webhook, &slack.WebhookMessage{
+		Channel: "10_01_booth_notification",
+		Text: fmt.Sprintf(
+			"new submission: %s\n\n%s",
+			"https://docs.google.com/spreadsheets/d/1WX6vvcCJihBJ9tFN-8AixYAyt5i1nSfMeX81gsEEwjs/edit#gid=0",
+			string(data),
+		),
+	}); err != nil {
+		return errors.Wrap(err, "send message to channel")
+	}
 
-We know, it's a long time until November so we have some suggestions for you on how you can pass the time ⏱
-- Talk to other founders / startups and invite people to the event 🚀
-- Buy the tickets for you and your team and don't forget to use your discount code 20OFFspecial to get 20% off 💸 You can buy the tickets here: https://portal.startup-nights.ch
-- Read the FAQ if you have open questions: https://startup-nights.ch/faq
-
-Talk to you soon 😉
-
-Best regards,
-the Startup Nights Team`
+	return nil
+}

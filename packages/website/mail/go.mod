@@ -3,9 +3,11 @@ module github.com/startup-nights/functions/packages/website/mail
 go 1.19
 
 require (
+	github.com/pkg/errors v0.9.1
 	github.com/slack-go/slack v0.12.2
 	golang.org/x/oauth2 v0.8.0
 	google.golang.org/api v0.124.0
+	google.golang.org/protobuf v1.30.0
 )
 
 require (
@@ -26,5 +28,4 @@ require (
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20230410155749-daa745c078e1 // indirect
 	google.golang.org/grpc v1.55.0 // indirect
-	google.golang.org/protobuf v1.30.0 // indirect
 )
