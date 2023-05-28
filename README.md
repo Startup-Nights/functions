@@ -19,3 +19,4 @@ necessary. The result in this repo is a mix of:
 - https://stackoverflow.com/a/68699887
 - https://stackoverflow.com/a/66558604
 - https://docs.digitalocean.com/products/spaces/how-to/configure-cors/#xml
+- https://github.com/digitalocean/sample-functions-golang-presigned-url/blob/main/packages/presign/url/url.go

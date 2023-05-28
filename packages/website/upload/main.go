@@ -39,7 +39,12 @@ type Request struct {
 type Response struct {
 	StatusCode int               `json:"statusCode,omitempty"`
 	Headers    map[string]string `json:"headers,omitempty"`
-	Body       string            `json:"body,omitempty"`
+	Body       ResponseData      `json:"body"`
+}
+
+type ResponseData struct {
+	Upload   string `json:"upload"`
+	Download string `json:"download"`
 }
 
 func Main(in Request) (*Response, error) {
@@ -50,7 +55,7 @@ func Main(in Request) (*Response, error) {
 	}
 	session, err := session.NewSession(config)
 	if err != nil {
-		return &Response{StatusCode: http.StatusInternalServerError, Body: ""}, err
+		return &Response{StatusCode: http.StatusInternalServerError, Body: ResponseData{}}, err
 	}
 
 	client := s3.New(session)
@@ -60,16 +65,14 @@ func Main(in Request) (*Response, error) {
 	name := url.QueryEscape(in.Filename)
 	key := fmt.Sprintf("%d/%s/%d-%s", time.Now().Year(), "startups", time.Now().Nanosecond(), name)
 
-	object := s3.PutObjectInput{
+	uploadReq, _ := client.PutObjectRequest(&s3.PutObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(key),
 		ACL:    aws.String("public-read"),
-	}
-
-	req, _ := client.PutObjectRequest(&object)
-	url, err := req.Presign(5 * time.Minute)
+	})
+	uploadURL, err := uploadReq.Presign(5 * time.Minute)
 	if err != nil {
-		return &Response{StatusCode: http.StatusInternalServerError, Body: ""}, err
+		return &Response{StatusCode: http.StatusInternalServerError, Body: ResponseData{}}, err
 	}
 
 	return &Response{
@@ -77,6 +80,14 @@ func Main(in Request) (*Response, error) {
 		Headers: map[string]string{
 			"Content-Type": "application/json",
 		},
-		Body: fmt.Sprintf(`{"url":"%s"}`, url),
+		Body: ResponseData{
+			Upload: uploadURL,
+			Download: fmt.Sprintf(
+				"https://%s.%s.cdn.digitaloceanspaces.com/%s",
+				bucket,
+				region,
+				key,
+			),
+		},
 	}, nil
 }
