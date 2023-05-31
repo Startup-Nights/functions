@@ -56,7 +56,7 @@ func sendMail(ctx context.Context, in Request) error {
 
 const BoothRegistrationTemplate = `Hi {{.Contact.FirstName}} {{.Contact.LastName}},
 
-thank you for the registration for a booth for {{.Company.Name}} at the Startup Nights 2023 this November. We will reach out to you soon to confirm your registration.
+Thank you for registering a booth for {{.Company.Name}} at the Startup Nights 2023 in Winterthur. We are currently reviewing and confirming nominations in batches, which means you will hear from us within the next two weeks.
  
 {{if .Varia.Formats}}
 Beside the booth, you were interested in:
