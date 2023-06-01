@@ -59,8 +59,9 @@ func saveToSheets(ctx context.Context, in Request) error {
 		in.Varia.Package.Title,
 		strings.Join(in.Varia.Formats, "\n"),
 		in.Varia.Accomodation,
-		in.Varia.Ukraine,
+		in.Varia.Referral,
 		in.Varia.Equipment,
+		in.Varia.PreviousVisitor,
 	})
 
 	if _, err := service.Spreadsheets.Values.Append(spreadsheetId, writeRange, valRange).ValueInputOption("RAW").Do(); err != nil {

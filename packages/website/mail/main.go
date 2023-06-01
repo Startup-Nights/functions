@@ -68,11 +68,12 @@ type Contact struct {
 }
 
 type Varia struct {
-	Package      Package  `json:"package"`
-	Formats      []string `json:"formats"`
-	Accomodation string   `json:"accomodation"`
-	Ukraine      string   `json:"ukraine"`
-	Equipment    string   `json:"equipment"`
+	Package         Package  `json:"package"`
+	Formats         []string `json:"formats"`
+	Accomodation    string   `json:"accomodation"`
+	PreviousVisitor string   `json:"previous_visitor"`
+	Referral        string   `json:"referral"`
+	Equipment       string   `json:"equipment"`
 }
 
 type Package struct {
