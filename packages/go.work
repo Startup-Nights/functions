@@ -1,0 +1,9 @@
+go 1.19
+
+use (
+	.
+	./website/mail
+	./website/partner
+	./website/pitching
+	./website/upload
+)
