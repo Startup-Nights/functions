@@ -1,11 +1,11 @@
-module github.com/startup-nights/functions
+module github.com/startup-nights/functions/packages/website/gmail
 
 go 1.19
 
 require (
+	github.com/pkg/errors v0.9.1
 	golang.org/x/oauth2 v0.8.0
 	google.golang.org/api v0.124.0
-	gopkg.in/ini.v1 v1.67.0
 )
 
 require (

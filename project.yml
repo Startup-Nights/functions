@@ -38,17 +38,31 @@ packages:
         limits:
           memory: 1024
           timeout: 10000
-      - name: partner
+      - name: gmail
         binary: false
         main: ""
         runtime: go:1.20
         web: true
         webSecure: false
         environment:
-          REGION: "${REGION}"
-          BUCKET: "${BUCKET}"
-          KEY: "${KEY}"
-          SECRET: "${SECRET}"
+          CREDENTIALS: |
+            ${CREDENTIALS}
+          GMAIL: |
+            ${GMAIL}
+        limits:
+          memory: 1024
+          timeout: 10000
+      - name: sheets
+        binary: false
+        main: ""
+        runtime: go:1.20
+        web: true
+        webSecure: false
+        environment:
+          CREDENTIALS: |
+            ${CREDENTIALS}
+          SHEETS: |
+            ${SHEETS}
         limits:
           memory: 1024
           timeout: 10000

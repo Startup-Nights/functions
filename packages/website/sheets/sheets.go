@@ -1,4 +1,4 @@
-package lib
+package main
 
 import (
 	"bytes"
@@ -45,9 +45,15 @@ func NewSheetService(ctx context.Context, creds Credentials) (*SheetService, err
 	return svc, nil
 }
 
-func (s *SheetService) Save(ctx context.Context, id, writeRange string, data []interface{}) error {
+func (s *SheetService) Save(ctx context.Context, id, writeRange string, data []string) error {
+	values := []interface{}{}
+
+	for _, val := range data {
+		values = append(values, val)
+	}
+
 	valRange := &sheets.ValueRange{}
-	valRange.Values = append(valRange.Values, data)
+	valRange.Values = append(valRange.Values, values)
 
 	if _, err := s.service.Spreadsheets.Values.Append(id, writeRange, valRange).ValueInputOption("RAW").Do(); err != nil {
 		return errors.Wrap(err, "append data to spreadsheet")

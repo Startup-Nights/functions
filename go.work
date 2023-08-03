@@ -1,8 +1,8 @@
 go 1.19
 
 use (
-	.
+	./packages/website/gmail
 	./packages/website/mail
-	./packages/website/partner
+	./packages/website/sheets
 	./packages/website/upload
 )

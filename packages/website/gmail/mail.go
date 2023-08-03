@@ -1,4 +1,4 @@
-package lib
+package main
 
 import (
 	"bytes"
@@ -20,6 +20,11 @@ const (
 
 type MailService struct {
 	service *gmail.Service
+}
+
+type Credentials struct {
+	Config      string
+	Credentials string
 }
 
 func NewMailService(ctx context.Context, creds Credentials) (*MailService, error) {
@@ -46,12 +51,12 @@ func NewMailService(ctx context.Context, creds Credentials) (*MailService, error
 	return svc, nil
 }
 
-func (m *MailService) Send(ctx context.Context, subject, title, content string) error {
+func (m *MailService) Send(ctx context.Context, recipient, title, content string) error {
 	var message gmail.Message
 
 	msg := fmt.Sprintf(
 		"To: %s\r\nSubject: %s\n%s\n\n\n%s",
-		subject,
+		recipient,
 		title,
 		mime,
 		content,
