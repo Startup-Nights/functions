@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/startup-nights/functions/packages/lib"
+	"github.com/startup-nights/functions/lib"
 )
 
 var (
