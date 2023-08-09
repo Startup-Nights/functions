@@ -7,9 +7,9 @@ import (
 )
 
 type Request struct {
-	ID    string   `json:"id"`
-	Range string   `json:"range"`
-	Data  []string `json:"data"`
+	ID    string   `json:"id"`    // sheets id
+	Range string   `json:"range"` // range to write data
+	Data  []string `json:"data"`  // the data
 }
 
 type Response struct {

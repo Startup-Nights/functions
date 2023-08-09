@@ -13,25 +13,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 )
 
-var (
-	key, secret, region, bucket string
-)
-
-func init() {
-	if bucket = os.Getenv("BUCKET"); bucket == "" {
-		panic("no bucket provided")
-	}
-	if region = os.Getenv("REGION"); region == "" {
-		panic("no region provided")
-	}
-	if key = os.Getenv("KEY"); key == "" {
-		panic("no key provided")
-	}
-	if secret = os.Getenv("SECRET"); secret == "" {
-		panic("no secret provided")
-	}
-}
-
 type Request struct {
 	Filename string `json:"filename"`
 }
@@ -48,6 +29,11 @@ type ResponseData struct {
 }
 
 func Main(in Request) (*Response, error) {
+	bucket := os.Getenv("BUCKET")
+	region := os.Getenv("REGION")
+	secret := os.Getenv("SECRET")
+	key := os.Getenv("KEY")
+
 	config := &aws.Config{
 		Credentials: credentials.NewStaticCredentials(key, secret, ""),
 		Endpoint:    aws.String(fmt.Sprintf("%s.digitaloceanspaces.com:443", region)),
@@ -63,11 +49,11 @@ func Main(in Request) (*Response, error) {
 	// make sure that the file has a solid name and does not overwrite others
 	// in case multiple people use something like 'logo.png'
 	name := url.QueryEscape(in.Filename)
-	key := fmt.Sprintf("%d/%s/%d-%s", time.Now().Year(), "startups", time.Now().Nanosecond(), name)
+	folder := fmt.Sprintf("%d/%s/%d-%s", time.Now().Year(), "startups", time.Now().Nanosecond(), name)
 
 	uploadReq, _ := client.PutObjectRequest(&s3.PutObjectInput{
 		Bucket: aws.String(bucket),
-		Key:    aws.String(key),
+		Key:    aws.String(folder),
 		ACL:    aws.String("public-read"),
 	})
 	uploadURL, err := uploadReq.Presign(5 * time.Minute)

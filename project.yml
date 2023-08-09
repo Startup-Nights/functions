@@ -7,37 +7,6 @@ packages:
     parameters: {}
     annotations: {}
     functions:
-      - name: mail
-        binary: false
-        main: ""
-        runtime: go:1.20
-        web: true
-        webSecure: false
-        environment:
-          WEBHOOK: "${WEBHOOK}"
-          CREDENTIALS: |
-            ${CREDENTIALS}
-          GMAIL: |
-            ${GMAIL}
-          SHEETS: |
-            ${SHEETS}
-        limits:
-          memory: 1024
-          timeout: 10000
-      - name: upload
-        binary: false
-        main: ""
-        runtime: go:1.20
-        web: true
-        webSecure: false
-        environment:
-          REGION: "${REGION}"
-          BUCKET: "${BUCKET}"
-          KEY: "${KEY}"
-          SECRET: "${SECRET}"
-        limits:
-          memory: 1024
-          timeout: 10000
       - name: gmail
         binary: false
         main: ""
@@ -63,6 +32,24 @@ packages:
             ${CREDENTIALS}
           SHEETS: |
             ${SHEETS}
+        limits:
+          memory: 1024
+          timeout: 10000
+      - name: sheets
+        binary: false
+        main: ""
+        runtime: go:1.20
+        web: true
+        webSecure: false
+        environment:
+          BUCKET: |
+            ${BUCKET}
+          SECRET: |
+            ${SECRET}
+          REGION: |
+            ${SECRET}
+          KEY: |
+            ${KEY}
         limits:
           memory: 1024
           timeout: 10000

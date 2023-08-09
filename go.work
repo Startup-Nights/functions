@@ -5,5 +5,5 @@ use (
 	./packages/website/gmail
 	./packages/website/mail
 	./packages/website/sheets
-	./packages/website/upload
+	./packages/website/spaces
 )

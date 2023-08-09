@@ -8,6 +8,29 @@ Collection of serverless functions that are used maily for the
 - `./package/website/spaces`: create a presigned url to upload images to 
   digitalocean spaces
 
+The interfaces / requests:
+
+```go 
+// gmail
+type Request struct {
+	Recipient string `json:"recipient"`
+	Title     string `json:"title"`
+	Content   string `json:"content"`
+}
+
+// sheets
+type Request struct {
+	ID    string   `json:"id"`
+	Range string   `json:"range"`
+	Data  []string `json:"data"`
+}
+
+// spaces
+type Request struct {
+	Filename string `json:"filename"`
+}
+```
+
 ## Setup and deployment
  
 ```sh
