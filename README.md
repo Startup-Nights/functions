@@ -1,35 +1,7 @@
 # functions
 
-Collection of serverless functions that are used maily for the 
+Collection of serverless functions that are used mainly for the 
 [startup nights website](https://github.com/Startup-Nights/website).
-
-- `./package/website/gmail`: send an email to someone
-- `./package/website/sheets`: write data to a sheet or read from it
-- `./package/website/spaces`: create a presigned url to upload images to 
-  digitalocean spaces
-
-The interfaces / requests:
-
-```go 
-// gmail
-type Request struct {
-	Recipient string `json:"recipient"`
-	Title     string `json:"title"`
-	Content   string `json:"content"`
-}
-
-// sheets
-type Request struct {
-	ID    string   `json:"id"`
-	Range string   `json:"range"`
-	Data  []string `json:"data"`
-}
-
-// spaces
-type Request struct {
-	Filename string `json:"filename"`
-}
-```
 
 ## Setup and deployment
  
