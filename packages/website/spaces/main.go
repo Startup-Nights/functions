@@ -74,7 +74,7 @@ func Main(in Request) (*Response, error) {
 				"https://%s.%s.cdn.digitaloceanspaces.com/%s",
 				bucket,
 				region,
-				key,
+				folder,
 			),
 		},
 	}, nil

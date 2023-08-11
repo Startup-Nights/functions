@@ -42,14 +42,10 @@ packages:
         web: true
         webSecure: false
         environment:
-          BUCKET: |
-            ${BUCKET}
-          SECRET: |
-            ${SECRET}
-          REGION: |
-            ${REGION}
-          KEY: |
-            ${KEY}
+          BUCKET: ${BUCKET}
+          SECRET: ${SECRET}
+          REGION: ${REGION}
+          KEY: ${KEY}
         limits:
           memory: 1024
           timeout: 10000
