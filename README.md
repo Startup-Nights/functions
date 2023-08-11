@@ -49,10 +49,10 @@ doctl serverless deploy . --env data.env
 
 ## Notes
 
-Deploying / building the functions is not very consistent - there is often a 
-failure. Upon trying again, it often just vanishes. No solution yet; increasing
-both memory and timeout didn't solve it yet. The only option left is to try and
-reduce the imports - and split functions into multiple functions
+Functions shouldn't use many dependencies - the resources that are used to 
+build functions are very limiting. For example; to reliably get the functions 
+to build, it was necessary to split the gmail / sheets functionality into two
+functions.
 
 To be able to upload files to spaces, there are specific CORS settings 
 necessary. The result in this repo is a mix of:

@@ -1,11 +1,11 @@
 #!/bin/bash
 
-echo "-> deploying functions..."
+echo -e "=> deploying functions...\n"
 
 until doctl serverless deploy . --env data.env
 do
-    echo "-> failed to deploy functions, trying again..."
+    echo -e "\n=> failed to deploy functions, trying again...\n"
     sleep 1
 done
 
-echo "-> functions deployed successfully"
+echo -e "\n=> functions deployed successfully"

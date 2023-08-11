@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -26,6 +27,7 @@ type Response struct {
 type ResponseData struct {
 	Upload   string `json:"upload"`
 	Download string `json:"download"`
+	Error    string `json:"error"`
 }
 
 func Main(in Request) (*Response, error) {
@@ -36,12 +38,12 @@ func Main(in Request) (*Response, error) {
 
 	config := &aws.Config{
 		Credentials: credentials.NewStaticCredentials(key, secret, ""),
-		Endpoint:    aws.String(fmt.Sprintf("%s.digitaloceanspaces.com:443", region)),
+		Endpoint:    aws.String(fmt.Sprintf("%s.digitaloceanspaces.com:443", strings.TrimSpace(region))),
 		Region:      aws.String(region),
 	}
 	session, err := session.NewSession(config)
 	if err != nil {
-		return &Response{StatusCode: http.StatusInternalServerError, Body: ResponseData{}}, err
+		return &Response{StatusCode: http.StatusInternalServerError, Body: ResponseData{Error: err.Error()}}, err
 	}
 
 	client := s3.New(session)
@@ -58,7 +60,7 @@ func Main(in Request) (*Response, error) {
 	})
 	uploadURL, err := uploadReq.Presign(5 * time.Minute)
 	if err != nil {
-		return &Response{StatusCode: http.StatusInternalServerError, Body: ResponseData{}}, err
+		return &Response{StatusCode: http.StatusInternalServerError, Body: ResponseData{Error: err.Error()}}, err
 	}
 
 	return &Response{
