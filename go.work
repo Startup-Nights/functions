@@ -3,6 +3,7 @@ go 1.19
 use (
 	.
 	./packages/website/gmail
+	./packages/website/resize
 	./packages/website/sheets
 	./packages/website/spaces
 )
