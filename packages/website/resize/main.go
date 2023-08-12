@@ -36,7 +36,6 @@ type Response struct {
 }
 
 type ResponseData struct {
-	Upload   string `json:"upload"`
 	Download string `json:"download"`
 	Error    string `json:"error"`
 }

@@ -25,8 +25,9 @@ type Response struct {
 }
 
 type ResponseData struct {
-	Upload   string `json:"upload"`
-	Download string `json:"download"`
+	Upload   string `json:"upload"`   // presigned upload url
+	Download string `json:"download"` // convenience: direct url for download
+	Filename string `json:"filename"` // convenience: only the filename
 	Error    string `json:"error"`
 }
 
@@ -51,11 +52,11 @@ func Main(in Request) (*Response, error) {
 	// make sure that the file has a solid name and does not overwrite others
 	// in case multiple people use something like 'logo.png'
 	name := url.QueryEscape(in.Filename)
-	folder := fmt.Sprintf("%d/%s/%d-%s", time.Now().Year(), "startups", time.Now().Nanosecond(), name)
+	filename := fmt.Sprintf("%d/%s/%d-%s", time.Now().Year(), "startups", time.Now().Nanosecond(), name)
 
 	uploadReq, _ := client.PutObjectRequest(&s3.PutObjectInput{
 		Bucket: aws.String(bucket),
-		Key:    aws.String(folder),
+		Key:    aws.String(filename),
 		ACL:    aws.String("public-read"),
 	})
 	uploadURL, err := uploadReq.Presign(5 * time.Minute)
@@ -69,12 +70,13 @@ func Main(in Request) (*Response, error) {
 			"Content-Type": "application/json",
 		},
 		Body: ResponseData{
-			Upload: uploadURL,
+			Upload:   uploadURL,
+			Filename: filename,
 			Download: fmt.Sprintf(
 				"https://%s.%s.cdn.digitaloceanspaces.com/%s",
 				bucket,
 				region,
-				folder,
+				filename,
 			),
 		},
 	}, nil
