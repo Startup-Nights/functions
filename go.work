@@ -1,10 +1,9 @@
-go 1.21
-
-toolchain go1.21.0
+go 1.21.0
 
 use (
 	.
 	./packages/website/gmail
+	./packages/website/program
 	./packages/website/resize
 	./packages/website/sheets
 	./packages/website/spaces
