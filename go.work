@@ -3,7 +3,6 @@ go 1.21.0
 use (
 	.
 	./packages/website/gmail
-	./packages/website/program
 	./packages/website/resize
 	./packages/website/sheets
 	./packages/website/spaces

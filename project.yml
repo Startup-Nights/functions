@@ -63,12 +63,3 @@ packages:
         limits:
           memory: 1024
           timeout: 10000
-      - name: program
-        binary: false
-        main: ""
-        runtime: go:1.20
-        web: true
-        webSecure: false
-        limits:
-          memory: 1024
-          timeout: 10000
