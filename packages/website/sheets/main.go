@@ -7,9 +7,16 @@ import (
 )
 
 type Request struct {
-	ID    string   `json:"id"`    // sheets id
-	Range string   `json:"range"` // range to write data
-	Data  []string `json:"data"`  // the data
+	ID    string `json:"id"`    // sheets id
+	Range string `json:"range"` // range to read or write data
+
+	// for save requests: the data to write
+	Data []string `json:"data"`
+
+	// https://docs.digitalocean.com/products/functions/reference/parameters-responses/#event-parameter
+	RequestData struct {
+		Method string `json:"method"`
+	} `json:"http"`
 }
 
 type Response struct {
@@ -19,14 +26,14 @@ type Response struct {
 }
 
 type ResponseData struct {
-	Error string `json:"error"`
+	// for read requests
+	Data  [][]string `json:"data"`
+	Error string     `json:"error"`
 }
 
-func Main(in Request) (*Response, error) {
+func Main(ctx context.Context, in Request) (*Response, error) {
 	credentials := os.Getenv("CREDENTIALS")
 	gmailCreds := os.Getenv("SHEETS")
-
-	ctx := context.Background()
 
 	svc, err := NewSheetService(ctx, Credentials{
 		Config:      credentials,
@@ -39,16 +46,49 @@ func Main(in Request) (*Response, error) {
 		}, err
 	}
 
-	if err := svc.Save(ctx, in.ID, in.Range, in.Data); err != nil {
+	switch in.ID {
+	case "1WX6vvcCJihBJ9tFN-8AixYAyt5i1nSfMeX81gsEEwjs":
+		fallthrough
+	case "1ifvj7KmYvitjVGiKFceve7Zce9KlTijic2MDI_aXn9I":
+		// TODO: this switch should be more "official"
+		// maybe based on an url parameter?
+
+		// in case there is no data, handle this as a read request
+		if len(in.Data) == 0 {
+			data, err := svc.Read(ctx, in.ID, in.Range)
+			if err != nil {
+				return &Response{
+					StatusCode: http.StatusInternalServerError,
+					Body:       ResponseData{Error: err.Error()},
+				}, err
+			}
+
+			return &Response{
+				StatusCode: http.StatusOK,
+				Body: ResponseData{
+					Data:  data,
+					Error: "",
+				},
+			}, err
+		}
+
+		if err := svc.Save(ctx, in.ID, in.Range, in.Data); err != nil {
+			return &Response{
+				StatusCode: http.StatusInternalServerError,
+				Body:       ResponseData{Error: err.Error()},
+			}, err
+		}
+
+		return &Response{
+			StatusCode: http.StatusOK,
+			Headers:    map[string]string{"Content-Type": "application/json"},
+			Body:       ResponseData{},
+		}, nil
+
+	default:
 		return &Response{
 			StatusCode: http.StatusInternalServerError,
-			Body:       ResponseData{Error: err.Error()},
+			Body:       ResponseData{Error: "not authorized"},
 		}, err
 	}
-
-	return &Response{
-		StatusCode: http.StatusOK,
-		Headers:    map[string]string{"Content-Type": "application/json"},
-		Body:       ResponseData{},
-	}, nil
 }

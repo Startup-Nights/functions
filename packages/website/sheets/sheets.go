@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/pkg/errors"
 	"golang.org/x/oauth2"
@@ -60,4 +61,25 @@ func (s *SheetService) Save(ctx context.Context, id, writeRange string, data []s
 	}
 
 	return nil
+}
+
+func (s *SheetService) Read(ctx context.Context, id, readRange string) ([][]string, error) {
+	data := [][]string{}
+
+	resp, err := s.service.Spreadsheets.Values.Get(id, readRange).Do()
+	if err != nil {
+		return [][]string{}, errors.Wrap(err, "read spreadsheet")
+	}
+
+	for _, row := range resp.Values {
+		tmp := []string{}
+
+		for _, cell := range row {
+			tmp = append(tmp, fmt.Sprintf("%s", cell))
+		}
+
+		data = append(data, tmp)
+	}
+
+	return data, nil
 }
