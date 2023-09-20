@@ -1,7 +1,7 @@
 name: deploy-digitalocean-functions
-on: [push]
+on: [push, workflow_dispatch]
 jobs:
-  check-bats-version:
+  deploy-functions:
     runs-on: ubuntu-latest
     steps:
       - name: install doctl
