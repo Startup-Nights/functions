@@ -5,14 +5,20 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     steps:
+      - name: checkout code
+        uses: actions/checkout@v4
+
       - name: install doctl
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
       - name: install serverless plugin
         run: doctl serverless install
-      - name: install serverless plugin
+
+      - name: connect to serverless namespace
         run: doctl serverless connect
+
       - name: deploy functions
         run: doctl serverless deploy .
         env:
