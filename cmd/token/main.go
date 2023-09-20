@@ -15,7 +15,7 @@ import (
 )
 
 func main() {
-	// generate a new token
+	// touch the files if not present yet
 	if err := os.WriteFile("sheets_token.json", []byte(""), 0644); err != nil {
 		log.Fatalf("overwrite token file: %v", err)
 	}
@@ -23,6 +23,8 @@ func main() {
 		log.Fatalf("overwrite token file: %v", err)
 	}
 
+	// oauth credentials from here:
+	// https://console.cloud.google.com/apis/credentials
 	b, err := os.ReadFile("credentials.json")
 	if err != nil {
 		log.Fatalf("read client secret file: %v", err)
@@ -65,6 +67,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("read env file: %v", err)
 	}
+
+	// print the credentials
+	fmt.Println("credentials for github actions:")
+	fmt.Println("https://github.com/Startup-Nights/functions/settings/environments/1334222998/edit")
+	fmt.Printf("\n\ngmail credentials (-> 'GMAIL'):\n%s\n", string(gmailData))
+	fmt.Printf("\n\nsheets credentials (-> 'SHEETS'):\n%s\n", string(sheetsData))
 
 	// update / overwrite env variables
 	data.Section("").Key("CREDENTIALS").SetValue(string(credentialsData))
