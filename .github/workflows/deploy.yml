@@ -3,6 +3,7 @@ on: [push, workflow_dispatch]
 jobs:
   deploy-functions:
     runs-on: ubuntu-latest
+    environment: prod
     steps:
       - name: install doctl
         uses: digitalocean/action-doctl@v2
