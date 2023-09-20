@@ -1,5 +1,4 @@
-name: learn-github-actions
-run-name: ${{ github.actor }} is learning GitHub Actions
+name: deploy-digitalocean-functions
 on: [push]
 jobs:
   check-bats-version:
@@ -11,3 +10,11 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: deploy functions
         run: doctl serverless deploy .
+        env:
+          BUCKET: ${{ secrets.BUCKET }}
+          SECRET: ${{ secrets.SECRET }}
+          REGION: ${{ secrets.REGION }}
+          KEY: ${{ secrets.KEY }}
+          CREDENTIALS: ${{ secrets.CREDENTIALS }}
+          GMAIL: ${{ secrets.GMAIL }}
+          SHEETS: ${{ secrets.SHEETS }}
