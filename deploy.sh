@@ -2,7 +2,7 @@
 
 echo -e "=> deploying functions...\n"
 
-until doctl serverless deploy . --env data.env
+until doctl serverless deploy .
 do
     echo -e "\n=> failed to deploy functions, trying again...\n"
     sleep 1

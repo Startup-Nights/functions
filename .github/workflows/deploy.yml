@@ -20,7 +20,7 @@ jobs:
         run: doctl serverless connect
 
       - name: deploy functions
-        run: doctl serverless deploy .
+        run: bash deploy.sh
         env:
           BUCKET: ${{ secrets.BUCKET }}
           SECRET: ${{ secrets.SECRET }}
