@@ -7,4 +7,9 @@ require (
 	golang.org/x/image v0.12.0
 )
 
-require github.com/jmespath/go-jmespath v0.4.0 // indirect
+require (
+	github.com/davecgh/go-spew v1.1.1 // indirect
+	github.com/jmespath/go-jmespath v0.4.0 // indirect
+	golang.org/x/net v0.17.0 // indirect
+	golang.org/x/text v0.14.0 // indirect
+)
