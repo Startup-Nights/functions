@@ -3,8 +3,6 @@
 Collection of serverless functions that are used mainly for the 
 [startup nights website](https://github.com/Startup-Nights/website).
 
-## Setup and deployment
- 
 ```sh
 # initial setup of digitalocean
 doctl auth init
@@ -12,10 +10,12 @@ doctl serverless connect
 # setup the cors configuration for spaces
 s3cmd setcors cors.xml s3://startupnights
 
-# create credentials for gmail / sheets API and update the env file
-go run cmd/token/main.go
+# update / view tokens
+go run main.go token --help
 
-# deploy and update the the functions as defined in 'project.yml'
+# manual deployment - data.env needs to be up to date
+# automatic deployments happen via github actions on commit
+# or when manually triggered
 doctl serverless deploy . --env data.env 
 ```
 

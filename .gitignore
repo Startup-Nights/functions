@@ -6,7 +6,4 @@ node_modules
 package-lock.json
 .DS_Store
 data.env
-
-credentials.json
-gmail_token.json
-sheets_token.json
+startup_nights_functions.yaml
