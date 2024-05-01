@@ -6,17 +6,17 @@ Collection of serverless functions that are used mainly for the
 ```sh
 # initial setup of digitalocean
 doctl auth init
+doctl serverless install
 doctl serverless connect
-# setup the cors configuration for spaces
-s3cmd setcors cors.xml s3://startupnights
 
-# update / view tokens
-go run main.go token --help
+# set up the environment variables; these are the same as the 
+# startup-nights/cli tool creates and uses to trigger the deployment via github
+# actions
+cp example.data.env data.env
+vim data.env
 
-# manual deployment - data.env needs to be up to date
-# automatic deployments happen via github actions on commit
-# or when manually triggered
-doctl serverless deploy . --env data.env 
+# deploy the functions
+bash deploy.sh
 ```
 
 ## Notes
@@ -27,7 +27,7 @@ to build, it was necessary to split the gmail / sheets functionality into two
 functions.
 
 To be able to upload files to spaces, there are specific CORS settings 
-necessary. The result in this repo is a mix of:
+necessary. The resulting `cors.xml` is a mix of:
 
 - https://stackoverflow.com/a/68699887
 - https://stackoverflow.com/a/66558604
