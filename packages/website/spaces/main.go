@@ -73,7 +73,7 @@ func Main(in Request) (*Response, error) {
 			Upload:   uploadURL,
 			Filename: filename,
 			Download: fmt.Sprintf(
-				"https://%s.%s.cdn.digitaloceanspaces.com/%s",
+				"https://%s.%s.digitaloceanspaces.com/%s",
 				bucket,
 				region,
 				filename,
