@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"regexp"
 	"strings"
 	"time"
 
@@ -51,8 +52,9 @@ func Main(in Request) (*Response, error) {
 
 	// make sure that the file has a solid name and does not overwrite others
 	// in case multiple people use something like 'logo.png'
-	name := url.QueryEscape(in.Filename)
-	filename := fmt.Sprintf("%d/%s/%d-%s", time.Now().Year(), "startups", time.Now().Nanosecond(), name)
+	name := url.QueryEscape(cleanup(in.Filename))
+	timestamp := fmt.Sprintf("%d", time.Now().Nanosecond())
+	filename := fmt.Sprintf("%d/%s/%s-%s", time.Now().Year(), "startups", timestamp, name)
 
 	uploadReq, _ := client.PutObjectRequest(&s3.PutObjectInput{
 		Bucket: aws.String(bucket),
@@ -73,11 +75,15 @@ func Main(in Request) (*Response, error) {
 			Upload:   uploadURL,
 			Filename: filename,
 			Download: fmt.Sprintf(
-				"https://%s.%s.digitaloceanspaces.com/%s",
+				"https://%s.%s.cdn.digitaloceanspaces.com/%s",
 				bucket,
 				region,
 				filename,
 			),
 		},
 	}, nil
+}
+
+func cleanup(filename string) string {
+	return string(regexp.MustCompile(`[^a-zA-Z._]`).ReplaceAll([]byte(filename), []byte("")))
 }
