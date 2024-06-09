@@ -32,7 +32,7 @@ func TestResize(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			result, err := resize(bytes.NewBuffer(data), typeFromFilename(tt.input))
+			result, err := resize(bytes.NewBuffer(data), typeFromFilename(tt.input), 600, 300)
 			if err != nil {
 				t.Fatal(err)
 			}

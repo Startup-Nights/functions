@@ -27,6 +27,8 @@ const (
 
 type Request struct {
 	Filename string `json:"filename"`
+	Width    int    `json:"width"`
+	Height   int    `json:"height"`
 }
 
 type Response struct {
@@ -71,7 +73,17 @@ func Main(in Request) (*Response, error) {
 		return &Response{StatusCode: http.StatusInternalServerError, Body: ResponseData{Error: err.Error()}}, err
 	}
 
-	resized, err := resize(&input, typeFromFilename(in.Filename))
+	width := in.Width
+	height := in.Height
+
+	if width == 0 {
+		width = 600
+	}
+	if height == 0 {
+		height = 300
+	}
+
+	resized, err := resize(&input, typeFromFilename(in.Filename), width, height)
 	if err != nil {
 		return &Response{StatusCode: http.StatusInternalServerError, Body: ResponseData{Error: err.Error()}}, err
 	}
@@ -115,7 +127,7 @@ func Main(in Request) (*Response, error) {
 }
 
 // resizes the image to fit the canvas
-func resize(in io.Reader, filetype int) (io.Reader, error) {
+func resize(in io.Reader, filetype, width, height int) (io.Reader, error) {
 	var (
 		output bytes.Buffer
 		src    image.Image
@@ -138,8 +150,8 @@ func resize(in io.Reader, filetype int) (io.Reader, error) {
 	x := float64(src.Bounds().Max.X)
 	y := float64(src.Bounds().Max.Y)
 
-	factorX := x / 600
-	factorY := y / 300
+	factorX := x / float64(width)
+	factorY := y / float64(height)
 
 	var dst *image.RGBA
 
