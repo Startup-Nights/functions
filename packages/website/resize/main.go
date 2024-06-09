@@ -88,7 +88,7 @@ func Main(in Request) (*Response, error) {
 		return &Response{StatusCode: http.StatusInternalServerError, Body: ResponseData{Error: err.Error()}}, err
 	}
 
-	adjusted, err := adjustCanvas(resized)
+	adjusted, err := adjustCanvas(resized, width, height)
 	if err != nil {
 		return &Response{StatusCode: http.StatusInternalServerError, Body: ResponseData{Error: err.Error()}}, err
 	}
@@ -156,9 +156,9 @@ func resize(in io.Reader, filetype, width, height int) (io.Reader, error) {
 	var dst *image.RGBA
 
 	if factorX > factorY {
-		dst = image.NewRGBA(image.Rect(0, 0, 600, int(y/factorX)))
+		dst = image.NewRGBA(image.Rect(0, 0, width, int(y/factorX)))
 	} else {
-		dst = image.NewRGBA(image.Rect(0, 0, int(x/factorY), 300))
+		dst = image.NewRGBA(image.Rect(0, 0, int(x/factorY), height))
 	}
 
 	draw.NearestNeighbor.Scale(dst, dst.Rect, src, src.Bounds(), draw.Over, nil)
@@ -170,7 +170,7 @@ func resize(in io.Reader, filetype, width, height int) (io.Reader, error) {
 }
 
 // makes sure that the image is in the center of the canvas
-func adjustCanvas(in io.Reader) (io.Reader, error) {
+func adjustCanvas(in io.Reader, width, height int) (io.Reader, error) {
 	var output bytes.Buffer
 
 	src, err := png.Decode(in)
@@ -181,10 +181,10 @@ func adjustCanvas(in io.Reader) (io.Reader, error) {
 	x := float64(src.Bounds().Max.X)
 	y := float64(src.Bounds().Max.Y)
 
-	moveX := (600 - x) / 2
-	moveY := (300 - y) / 2
+	moveX := (float64(width) - x) / 2
+	moveY := (float64(height) - y) / 2
 
-	dst := image.NewRGBA(image.Rect(0, 0, 600, 300))
+	dst := image.NewRGBA(image.Rect(0, 0, width, height))
 
 	draw.Copy(dst, image.Pt(int(moveX), int(moveY)), src, src.Bounds(), draw.Over, nil)
 	if err := png.Encode(&output, dst); err != nil {

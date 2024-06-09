@@ -69,7 +69,7 @@ func TestAdjustCanvas(t *testing.T) {
 				t.Fatal(err)
 			}
 
-			result, err := adjustCanvas(bytes.NewBuffer(data))
+			result, err := adjustCanvas(bytes.NewBuffer(data), 600, 300)
 			if err != nil {
 				t.Fatal(err)
 			}
