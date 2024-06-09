@@ -98,7 +98,7 @@ func Main(in Request) (*Response, error) {
 		return &Response{StatusCode: http.StatusInternalServerError, Body: ResponseData{Error: err.Error()}}, err
 	}
 
-	filename := fmt.Sprintf("%s_scaled.png", strings.Split(in.Filename, ".")[0])
+	filename := fmt.Sprintf("%s_%dx%d.png", strings.Split(in.Filename, ".")[0], width, height)
 	object := s3.PutObjectInput{
 		Bucket: aws.String(bucket),
 		Key:    aws.String(filename),
